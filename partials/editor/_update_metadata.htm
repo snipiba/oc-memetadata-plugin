@@ -139,7 +139,17 @@
 				        </div>
 				        <?php endif; ?>
 				        <div class="tab-pane">
-				            Tab three content
+				            <h3>How to show metadata?</h3>
+				            <p>If you wish to display your metadata, please use component or page snippet, which comes with this plugin.</p>
+				            <h4>Custom way?</h4>
+				            <p>This plugins has registered twig helper <strong>|metadata</strong>, then when you use <br/>
+				            	<code>{% set metadata = 'path_to_file.jpg'|metadata %}</code>
+				            	you can use  <code> {{ metadata.title }} </code> to obtain title field from metadata.
+				            </p> 
+				            <h4>Support my work</h4>
+				            <p>If you like this or other plugins, please, support my work with some beers.</p>
+				            <p><a href="https://www.buymeacoffee.com/snipiba" target="_blank"><img width="160" src="https://www.snipi.sk/storage/app/media/bmc-full-logo-no-background.png" alt="Buymeacoffee.com"></a></p>
+
 				        </div>
 				    </div>
 				</div>

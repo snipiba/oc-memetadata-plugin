@@ -1,4 +1,4 @@
 fields:
     introduction:
         type: partial
-        path: $/snipi/wpcontentimporter/partials/introduction.htm
+        path: $/snipi/memetadata/partials/introduction.htm

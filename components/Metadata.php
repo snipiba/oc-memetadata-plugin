@@ -71,6 +71,15 @@ class Metadata extends ComponentBase {
     	return $this->property('field');
     }
 
+    public function customValue($field) {
+    	if($this->property('file_path') != '') {
+			$metadata = MediaLIbraryItemMetadata::where('filepath', 'like' ,'%' . $this->property('file_path'))->first();
+			if($metadata) {
+		        return $metadata->$field;
+		    }
+		}
+    }
+
     public function path() {
     	return $this->property('file_path');
     }

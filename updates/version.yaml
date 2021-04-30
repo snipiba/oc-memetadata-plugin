@@ -4,3 +4,4 @@
     - create_snipi_me_metadata_table.php
 1.0.2: Updated default language
 1.0.3: Updated plugin name
+1.0.4: Updated component template to add alt/title tag to image tag

@@ -85,6 +85,53 @@ class MEMetadata {
             $widget->addDynamicMethod('onLoadCropPopup', function() use ($widget){
             	return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/crop_image', ['data' => Input::all()]);
             });
+
+
+
+			$widget->bindEvent('file.rename', function ($originalPath, $newPath) {
+		        // Update custom references to path here
+
+		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        if($origFile) {
+			        $origFile->filepath = $newPath;
+			        $origFile->save();
+			    }
+		    });
+
+			$widget->bindEvent('file.move', function ($originalPath, $newPath) {
+				$filename = basename($originalPath);
+		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        if($origFile) {
+			        $origFile->filepath = $newPath.'/'.$filename;
+			        $origFile->save();
+			    }
+		    });
+
+			$widget->bindEvent('file.delete', function ($originalPath) {
+		        // Update custom references to path here
+		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        if($origFile) {
+			        $origFile->delete();
+			    }
+		    });
+
+
+			$widget->bindEvent('folder.rename', function ($originalPath, $newPath) {
+
+		        $items = Metadata::where('filepath','like', '%'.$originalPath.'%')->get();
+		        foreach($items as $item) {
+		        	$item->filepath = str_replace($originalPath, $newPath, $item->full_path);
+		        	$item->save();
+		        }
+		        
+		    });
+
+			$widget->bindEvent('folder.delete', function ($originalPath) {
+		        // Update custom references to path here
+		        $items = Metadata::where('filepath','like', '%'.$originalPath.'%')->delete();
+		        
+		    });
+
 		});
 	}
 

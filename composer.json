@@ -1,5 +1,5 @@
 {
-    "name": "snipi/memetadata",
+    "name": "snipi/memetadata-plugin",
     "type": "october-plugin",
     "description": "Extend your media manager with metadata and other funcionality",
     "homepage": "https://www.snipi.sk",

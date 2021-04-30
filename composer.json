@@ -1,0 +1,16 @@
+{
+    "name": "snipi/memetadata",
+    "type": "october-plugin",
+    "description": "Extend your media manager with metadata and other funcionality",
+    "homepage": "https://www.snipi.sk",
+    "keywords": ["october", "cms", "edit","seo","metadata","media finder"],
+    "authors": [
+        {
+            "name": "SNiPI",
+            "email": "snipi@snipi.sk"
+        }
+    ],
+    "require": {
+        "spatie/image": "^1.0"
+    }
+}

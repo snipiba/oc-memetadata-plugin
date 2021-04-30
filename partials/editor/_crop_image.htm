@@ -1,0 +1,9 @@
+<script>
+	console.log(me_mediamanager);
+	$('.modal').trigger('close.oc.popup'); 
+	if(me_mediamanager !== 'undefined') {
+		me_mediamanager.cropSelectedImage();
+	} else {
+		me_mediamanager = $('div[data-control="media-manager"]').data('oc.mediaManager').cropSelectedImage();
+	}
+</script>

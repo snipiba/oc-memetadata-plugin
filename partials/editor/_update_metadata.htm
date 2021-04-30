@@ -1,0 +1,169 @@
+<?= Form::ajax($this->getEventHandler('onApplyMetadataUpdate'), [
+    'success' => "\$el.trigger('close.oc.popup');",
+    'data-stripe-load-indicator' => 1,
+    'id' => 'asset-metadata-popup-form'
+]) ?>
+<div class="layout">
+	<div class="layout-row panel min-size">
+		<div class="modal-header">
+			<button type="button" class="close" data-dismiss="popup">&times;</button>
+			<h4 class="modal-title"><?= e(trans('snipi.memetadata::lang.form.update_metadata')) ?></h4>
+		</div>
+		<div class="layout whiteboard">
+			<div class="layout-cell panel no-padding">
+				<img src="/storage/app/media<?= $originalPath ?>" class="w-full"/>
+			</div>
+			<input type="hidden" name="path" value="<?= $originalPath ?>"/>
+			<div class="layout-cell panel">
+				<div class="control-tabs secondary-tabs" data-control="tab">
+				    <ul class="nav nav-tabs">
+				        <li class="active"><a href="#Metadata">Metadata</a></li>
+				        <?php if(false === empty($this->vars['exif'])):?>
+				        <li><a href="#Exif">Exif informations</a></li>
+				        <?php endif; ?>
+				        <li><a href="#About">About</a></li>
+				    </ul>
+				    <div class="tab-content">
+				        <div class="tab-pane active">
+				            <div class="form-group">
+					            <label><?= e(trans('snipi.memetadata::lang.form.title')) ?></label>
+					            <input
+					                type="text"
+					                name="title"
+					                value="<?= $title ? $title : $this->vars['exif']['FileName'] ?? '' ?>"
+					                class="form-control"
+					                autocomplete="off" />
+					        </div>
+					        <div class="form-group">
+					            <label><?= e(trans('snipi.memetadata::lang.form.keywords')) ?></label>
+					            <input
+					                type="text"
+					                name="keywords"
+					                value="<?= e($keywords) ?>"
+					                class="form-control"
+					                autocomplete="off" />
+					        </div>
+					        <div class="row">
+						        <div class="form-group col-sm-6">
+						            <label><?= e(trans('snipi.memetadata::lang.form.source')) ?>
+						            	</label>
+						            <input
+						                type="text"
+						                name="source"
+						                value="<?= e($source) ?>"
+						                class="form-control"
+						                autocomplete="off" />
+						        </div>
+						        <div class="form-group col-sm-6">
+						            <label><?= e(trans('snipi.memetadata::lang.form.source_url')) ?></label>
+						            <input
+						                type="text"
+						                name="source_url"
+						                value="<?= e($source_url) ?>"
+						                class="form-control"
+						                autocomplete="off" />
+						        </div>
+					        </div>
+					        <div class="row">
+						        <div class="form-group col-sm-6">
+						            <label><?= e(trans('snipi.memetadata::lang.form.author')) ?>
+						            	<?php if($author == '' && false === empty($this->vars['exif']['Artist'])): ?>
+						            	<strong><small class=" text-danger">EXIF</strong></small>
+						            	<?php endif; ?></label>
+						            <input
+						                type="text"
+						                name="author"
+						                value="<?= $author ? $author : $this->vars['exif']['Artist'] ?? '' ?>"
+						                class="form-control"
+						                autocomplete="off" />
+						        </div>
+						        <div class="form-group col-sm-6">
+						            <label><?= e(trans('snipi.memetadata::lang.form.author_url')) ?></label>
+						            <input
+						                type="text"
+						                name="author_url"
+						                value="<?= $author_url ?>"
+						                class="form-control"
+						                autocomplete="off" />
+						        </div>
+					        </div>
+					        <div class="form-group">
+					            <label><?= e(trans('snipi.memetadata::lang.form.description')) ?>
+						            	<?php if($description == '' && false === empty($this->vars['exif']['ImageDescription'])): ?>
+						            	<strong><small class=" text-danger">EXIF</strong></small>
+						            	<?php endif; ?></label>
+					            <textarea
+					                type="text"
+					                name="description"
+					                class="form-control"
+					                rows="4"
+					                autocomplete="off"><?= $description ? $description : $this->vars['exif']['ImageDescription'] ?? '' ?></textarea>
+					        </div>
+
+				        </div>
+				        <?php if(false === empty($this->vars['exif'])):?>
+				        <div class="tab-pane">
+				            <div class="control-list" style="max-height: 360px; overflow: auto;">
+							    <table class="table data">
+							        <thead>
+							            <tr>
+							                <th style="width: 40%"><span>Field</span></th>
+							                <th ><span>Value</span></th>
+							            </tr>
+							        </thead>
+							        <tbody>
+							            <?php
+							            foreach($this->vars['exif'] as $field => $val): ?>
+							            <tr>
+							                <td style="padding: 6px 0;" class="t-ww">
+							                    <?= $field ?>
+							                </td>
+							                <?php if(false === is_array($val)): ?>
+							                <td style="padding: 6px 0;" class="t-ww"><?= $val ?></td>
+							                <?php 
+							                else:
+							                ?>
+
+							                <td style="padding: 6px 0;" class="t-ww"><?= implode(',',$val) ?></td>
+							                <?php
+							                endif;
+							                ?>
+
+							            </tr>
+							            <?php
+							            endforeach;
+							            ?>
+							        </tbody>
+							    </table>
+							</div>
+				        </div>
+				        <?php endif; ?>
+				        <div class="tab-pane">
+				            Tab three content
+				        </div>
+				    </div>
+				</div>
+				
+			    <div class="modal-footer">
+			        <button
+			            type="submit"
+			            class="btn btn-primary">
+			            <?= e(trans('backend::lang.form.apply')) ?>
+			        </button>
+			        <button
+			            type="button"
+			            class="btn btn-default"
+			            data-dismiss="popup">
+			            <?= e(trans('backend::lang.form.cancel')) ?>
+			        </button>
+			    </div>
+		    </div>
+		</div>
+	</div>
+    <script>
+        setTimeout(
+            function(){ $('#asset-metadata-popup-form input.form-control:eq(0)').focus() },
+            310
+        )
+    </script>
+<?= Form::close() ?>

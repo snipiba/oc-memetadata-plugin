@@ -1,0 +1,4 @@
+1.0.0: 'Creating of unique plugin for extending media library'
+1.0.1:
+    - 'creating custom table for storing metadata'
+    - create_snipi_me_metadata_table.php

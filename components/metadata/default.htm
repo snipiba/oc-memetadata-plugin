@@ -1,0 +1,9 @@
+<{{ __SELF__.tag }} class="{{ __SELF__.cssClasses }}">
+{% if __SELF__.field == 'path' %}
+	{{ __SELF__.path | media }}
+{% elseif __SELF__.field == 'image' %}
+	<img src="{{ __SELF__.path | media }}" {% if __SELF__.cssClasses is defined %}class="{{ __SELF__.cssClasses }}"{% endif %} {% if __SELF__.styles is defined %}style="{{ __SELF__.styles }}"{% endif %}>
+{% else %}
+	{{ __SELF__.value }}
+{% endif %}
+</{{ __SELF__.tag }}>

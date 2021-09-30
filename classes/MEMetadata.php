@@ -55,14 +55,14 @@ class MEMetadata {
 		        $widget->vars['originalPath'] = $path;
 		        $widget->vars['name'] = basename($path);
 		        $widget->vars['theme'] = $this->theme;
-		        $widget->vars['exif'] = exif_read_data(storage_path('app/media' . $path));
+		        $widget->vars['exif'] = @exif_read_data(storage_path('app/media' . $path));
 
             	return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/update_metadata', ['data' => Input::all(), 'theme' => $this->theme]);
             });
 
             $widget->addDynamicMethod('onApplyMetadataUpdate', function() use ($widget){
             	$path = Input::get('path');
-            	$metadata = Metadata::where('filepath',$path)->first();
+            	$metadata = Metadata::where('filepath','like', '%'.$path)->first();
             	if($metadata) {
 	        		$metadata->title = Input::get('title');
 	        		$metadata->keywords = Input::get('keywords');
@@ -91,16 +91,16 @@ class MEMetadata {
 			$widget->bindEvent('file.rename', function ($originalPath, $newPath) {
 		        // Update custom references to path here
 
-		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
-			        $origFile->filepath = $newPath;
+			        $origFile->filepath = '/'.basename($newPath);
 			        $origFile->save();
 			    }
 		    });
 
 			$widget->bindEvent('file.move', function ($originalPath, $newPath) {
 				$filename = basename($originalPath);
-		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
 			        $origFile->filepath = $newPath.'/'.$filename;
 			        $origFile->save();
@@ -109,7 +109,7 @@ class MEMetadata {
 
 			$widget->bindEvent('file.delete', function ($originalPath) {
 		        // Update custom references to path here
-		        $origFile = Metadata::where('filepath', basename($originalPath))->first();
+		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
 			        $origFile->delete();
 			    }

@@ -49,7 +49,7 @@ class Plugin extends PluginBase
     public function getMediaInfo($value) {
 
         $mediaFolder = Config::get('cms.storage.media.folder', 'media');
-        $data = MediaLibraryItemMetadata::where('filepath', '/' . $value)->first();
+        $data = MediaLibraryItemMetadata::where('filepath', 'like','%' . $value)->first();
         if($data) {
             return $data;
         }        

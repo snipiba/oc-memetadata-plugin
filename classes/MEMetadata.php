@@ -57,7 +57,7 @@ class MEMetadata {
 		        $widget->vars['theme'] = $this->theme;
 		        $widget->vars['exif'] = @exif_read_data(storage_path('app/media' . $path));
 
-            	return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/update_metadata', ['data' => Input::all(), 'theme' => $this->theme]);
+            	return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/update_metadata.htm', ['data' => Input::all(), 'theme' => $this->theme]);
             });
 
             $widget->addDynamicMethod('onApplyMetadataUpdate', function() use ($widget){

@@ -1,7 +1,6 @@
 <?= Form::ajax($this->getEventHandler('onApplyMetadataUpdate'), [
-    'success' => "\$el.trigger('close.oc.popup');",
     'data-stripe-load-indicator' => 1,
-    'id' => 'asset-metadata-popup-form'
+    'id' => 'asset-metadata-popup-form',    
 ]) ?>
 <div class="layout">
 	<div class="layout-row panel min-size">
@@ -11,7 +10,7 @@
 		</div>
 		<div class="layout whiteboard">
 			<div class="layout-cell panel no-padding">
-				<img src="/storage/app/media<?= $originalPath ?>" class="w-full"/>
+				<img src="/storage/app/media<?= $originalPath ?>" class="w-full" style="max-width:100%;"/>
 			</div>
 			<input type="hidden" name="path" value="<?= $originalPath ?>"/>
 			<div class="layout-cell panel">
@@ -157,6 +156,7 @@
 			    <div class="modal-footer">
 			        <button
 			            type="submit"
+			            data-attach-loading
 			            class="btn btn-primary">
 			            <?= e(trans('backend::lang.form.apply')) ?>
 			        </button>
@@ -164,7 +164,7 @@
 			            type="button"
 			            class="btn btn-default"
 			            data-dismiss="popup">
-			            <?= e(trans('backend::lang.form.cancel')) ?>
+			            <?= e(trans('backend::lang.form.close')) ?>
 			        </button>
 			    </div>
 		    </div>

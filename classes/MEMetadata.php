@@ -43,7 +43,6 @@ class MEMetadata {
 		        }
 
 		        $metadata = Metadata::where('filepath',$path)->first();
-
 		        $widget->vars['title'] = $metadata->title ?? '';
 		        $widget->vars['keywords'] = $metadata->keywords ?? '';
 		        $widget->vars['description'] = $metadata->description ?? '';
@@ -57,6 +56,7 @@ class MEMetadata {
 		        $widget->vars['theme'] = $this->theme;
 		        $widget->vars['exif'] = @exif_read_data(storage_path('app/media' . $path));
 
+		        $widget->vars['is_image'] = is_array(getimagesize(storage_path('app/media' . $path))) ? true : false;
 
 				if (class_exists('System'))  {
 					return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/update_metadata.htm', ['data' => Input::all(), 'theme' => $this->theme]);
@@ -91,7 +91,12 @@ class MEMetadata {
             });
 
             $widget->addDynamicMethod('onLoadCropPopup', function() use ($widget){
-            	return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/crop_image', ['data' => Input::all()]);
+
+				if (class_exists('System'))  {
+            		return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/crop_image.htm', ['data' => Input::all()]);
+				} else {
+            		return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/crop_image', ['data' => Input::all()]);
+				}
             });
 
 

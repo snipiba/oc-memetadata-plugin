@@ -9,9 +9,15 @@
 			<h4 class="modal-title"><?= e(trans('snipi.memetadata::lang.form.update_metadata')) ?></h4>
 		</div>
 		<div class="layout whiteboard">
+			<?php
+			if($this->vars['is_image']):
+			?>
 			<div class="layout-cell panel no-padding">
 				<img src="/storage/app/media<?= $originalPath ?>" class="w-full" style="max-width:100%;"/>
 			</div>
+			<?php
+			endif;
+			?>
 			<input type="hidden" name="path" value="<?= $originalPath ?>"/>
 			<div class="layout-cell panel">
 				<div class="control-tabs secondary-tabs" data-control="tab">

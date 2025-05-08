@@ -1,23 +1,25 @@
 <?= Form::ajax($this->getEventHandler('onApplyMetadataUpdate'), [
     'data-stripe-load-indicator' => 1,
-    'id' => 'asset-metadata-popup-form',    
+    'id' => 'asset-metadata-popup-form',
+    'data-request-flash' => true,
+    'data-request-success' => "$('.modal').trigger('close.oc.popup')"
 ]) ?>
 <div class="layout">
 	<div class="layout-row panel min-size">
 		<div class="modal-header">
-			<button type="button" class="close" data-dismiss="popup">&times;</button>
-			<h4 class="modal-title"><?= e(trans('snipi.memetadata::lang.form.update_metadata')) ?></h4>
-		</div>
+            <h4 class="modal-title"><?= e(trans('snipi.memetadata::lang.form.update_metadata')) ?></h4>
+            <button type="button" class="btn-close" data-dismiss="popup"></button>
+        </div>
 		<div class="layout whiteboard">
-			<?php
-			if($this->vars['is_image']):
-			?>
-			<div class="layout-cell panel no-padding">
-				<img src="/storage/app/media<?= $originalPath ?>" class="w-full" style="max-width:100%;"/>
-			</div>
-			<?php
-			endif;
-			?>
+            <?php if($this->vars['is_image']): ?>
+                <div class="layout-cell panel no-padding" style="text-align:center; vertical-align: middle;object-fit: cover;">
+                    <?php if(!empty($this->vars['is_svg'])): ?>
+                        <object data="/storage/app/media<?= $originalPath ?>" type="image/svg+xml" class="w-full" style="max-width:100%; height: 200px;"></object>
+                    <?php else: ?>
+                        <img src="/storage/app/media<?= $originalPath ?>" class="w-full" style="max-width:100%;"/>
+                    <?php endif; ?>
+                </div>
+            <?php endif; ?>
 			<input type="hidden" name="path" value="<?= $originalPath ?>"/>
 			<div class="layout-cell panel">
 				<div class="control-tabs secondary-tabs" data-control="tab">
@@ -148,31 +150,18 @@
 				            <p>If you wish to display your metadata, please use component or page snippet, which comes with this plugin.</p>
 				            <h4>Custom way?</h4>
 				            <p>This plugins has registered twig helper <strong>|metadata</strong>, then when you use <br/>
-				            	<code>{% set metadata = 'path_to_file.jpg'|metadata %}</code>
+				            	<code>{% set metadata = '<?= ltrim($originalPath,'/') ?>'|metadata %}</code>
 				            	you can use  <code> {{ metadata.title }} </code> to obtain title field from metadata.
 				            </p> 
-				            <h4>Support my work</h4>
-				            <p>If you like this or other plugins, please, support my work with some beers.</p>
-				            <p><a href="https://www.buymeacoffee.com/snipiba" target="_blank"><img width="160" src="https://www.snipi.sk/storage/app/media/bmc-full-logo-no-background.png" alt="Buymeacoffee.com"></a></p>
-
 				        </div>
 				    </div>
+        		    <div class="modal-footer">
+                        <button type="submit" data-attach-loading class="btn btn-primary"><?= e(trans('backend::lang.form.apply')) ?></button>
+                        <button type="button" class="btn btn-default" data-dismiss="popup">
+                            <?= e(trans('backend::lang.form.close')) ?>
+                        </button>
+                    </div>
 				</div>
-				
-			    <div class="modal-footer">
-			        <button
-			            type="submit"
-			            data-attach-loading
-			            class="btn btn-primary">
-			            <?= e(trans('backend::lang.form.apply')) ?>
-			        </button>
-			        <button
-			            type="button"
-			            class="btn btn-default"
-			            data-dismiss="popup">
-			            <?= e(trans('backend::lang.form.close')) ?>
-			        </button>
-			    </div>
 		    </div>
 		</div>
 	</div>

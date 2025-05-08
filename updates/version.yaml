@@ -15,3 +15,4 @@
 1.0.12: 
     - Fix partial for cropping tool
     - allowing metadata for all filetypes
+1.0.13: Added new component for rendering image with W3C complaint for WAI/WCAG

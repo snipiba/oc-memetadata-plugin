@@ -17,8 +17,7 @@
         'name' => 'Metadata',
         'description' => 'Show data from media metadata',
         
-        'label_metadata_group' => 'Metadata about image',
-
+        
         'prop_image' => 'Image path (filepath)',
         'prop_image_desc' => 'Must match the "filepath" column in the database',
     

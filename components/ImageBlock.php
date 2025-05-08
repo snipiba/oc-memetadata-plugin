@@ -71,7 +71,8 @@ class ImageBlock extends ComponentBase
     public function onRender()
     {
         $filepath = ltrim($this->property('image'), '/');
-        $this->meta = $file = MediaLibraryItemMetadata::where('filepath', 'like' ,'%' . $this->property('file_path'))->first();
+        $this->meta = $file = MediaLibraryItemMetadata::where('filepath', 'like' ,'%' . $filepath)->first();
+        //dd($file);
         $this->page['meta'] = $this->meta;
         
         if ($this->property('useDefaultStyles')) {

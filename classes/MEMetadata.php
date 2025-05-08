@@ -8,7 +8,7 @@ use Lang;
 use Cms\Classes\Theme;
 use Cms\Classes\Asset;
 use Backend\Classes\WidgetBase;
-use SNiPI\MEMetadata\Models\MediaLibraryItemMetadata as Metadata;
+use SNiPI\MEMetadata\Models\MediaLibraryItemMetadata;
 class MEMetadata {
 	
 
@@ -29,11 +29,11 @@ class MEMetadata {
 		
 		$manager::extend(function($widget) {
 
-			$widget->addViewPath(plugins_path().'/snipi/memetadata/partials/editor/');
+			//$widget->addViewPath(plugins_path().'/snipi/memetadata/partials/editor/');
             $widget->addViewPath(plugins_path().'/snipi/memetadata/partials/');
-            $widget->addJs('/plugins/snipi/memetadata/assets/js/metadata.js');
+            //$widget->addJs('/plugins/snipi/memetadata/assets/js/metadata.js');
             $widget->addCss('/plugins/snipi/memetadata/assets/css/metadata.css');
-
+            $widget->addJs('/plugins/snipi/memetadata/assets/js/extend-media.js');
             $widget->addDynamicMethod('onLoadMetadataPopup', function() use ($widget) {
 
 
@@ -41,8 +41,8 @@ class MEMetadata {
 		        if (!$this->validatePath($path)) {
 		            throw new ApplicationException(Lang::get('cms::lang.asset.invalid_path'));
 		        }
-
-		        $metadata = Metadata::where('filepath',$path)->first();
+		        
+		        $metadata = MediaLibraryItemMetadata::withoutGlobalScopes()->where('filepath', '=', $path)->first();
 		        $widget->vars['title'] = $metadata->title ?? '';
 		        $widget->vars['keywords'] = $metadata->keywords ?? '';
 		        $widget->vars['description'] = $metadata->description ?? '';
@@ -56,8 +56,13 @@ class MEMetadata {
 		        $widget->vars['theme'] = $this->theme;
 		        $widget->vars['exif'] = @exif_read_data(storage_path('app/media' . $path));
 
-		        $widget->vars['is_image'] = is_array(getimagesize(storage_path('app/media' . $path))) ? true : false;
-
+                $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+                $isSvg = in_array($ext, ['svg', 'svgz']);
+                $isBitmap = is_array(@getimagesize(storage_path('app/media' . $path)));
+                
+                $widget->vars['is_image'] = $isSvg || $isBitmap;
+                $widget->vars['is_svg'] = $isSvg;
+                
 				if (class_exists('System'))  {
 					return $widget->makePartial(plugins_path().'/snipi/memetadata/partials/editor/update_metadata.htm', ['data' => Input::all(), 'theme' => $this->theme]);
 				} else {
@@ -70,13 +75,17 @@ class MEMetadata {
 
             $widget->addDynamicMethod('onApplyMetadataUpdate', function() use ($widget){
             	$path = Input::get('path');
-            	$metadata = Metadata::where('filepath','like', '%'.$path)->first();
+            	$metadata = MediaLibraryItemMetadata::withoutGlobalScopes()->where('filepath',$path)->first();
             	if($metadata) {
 	        		$metadata->title = Input::get('title');
 	        		$metadata->keywords = Input::get('keywords');
 	        		$metadata->description = Input::get('description');
+	        		$metadata->source = Input::get('source');
+	        		$metadata->source_url = Input::get('source_url');
+	        		$metadata->author = Input::get('author');
+	        		$metadata->author_url = Input::get('author_url');
 	        	} else {
-	        		$metadata = new Metadata;
+	        		$metadata = new MediaLibraryItemMetadata;
 	        		$metadata->filepath = $path;
 	        		$metadata->title = Input::get('title');
 	        		$metadata->keywords = Input::get('keywords');
@@ -87,6 +96,12 @@ class MEMetadata {
 	        		$metadata->author_url = Input::get('author_url');
 	        	}
 	        	$metadata->save();
+
+                return [
+                    'X_OCTOBER_FLASH_MESSAGES' => [
+                        'success' => 'Metadata saved successfully.'
+                    ],
+                ];
 
             });
 
@@ -99,12 +114,21 @@ class MEMetadata {
 				}
             });
 
+            $widget->addDynamicMethod('onGetMediaMetadata', function() use ($widget){
+            
+                $path = post('path');
+                $meta = \SNiPI\MEMetadata\Models\MediaLibraryItemMetadata::where('filepath', $path)->first();
+            
+                return [
+                    'meta' => $meta ? $meta->only(['title','description','author', 'author_url', 'source', 'source_url','keywords']) : null
+                ];
+            });
 
 
 			$widget->bindEvent('file.rename', function ($originalPath, $newPath) {
 		        // Update custom references to path here
 
-		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
+		        $origFile = MediaLibraryItemMetadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
 			        $origFile->filepath = '/'.basename($newPath);
 			        $origFile->save();
@@ -113,7 +137,7 @@ class MEMetadata {
 
 			$widget->bindEvent('file.move', function ($originalPath, $newPath) {
 				$filename = basename($originalPath);
-		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
+		        $origFile = MediaLibraryItemMetadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
 			        $origFile->filepath = $newPath.'/'.$filename;
 			        $origFile->save();
@@ -122,7 +146,7 @@ class MEMetadata {
 
 			$widget->bindEvent('file.delete', function ($originalPath) {
 		        // Update custom references to path here
-		        $origFile = Metadata::where('filepath', 'like', '%'.basename($originalPath))->first();
+		        $origFile = MediaLibraryItemMetadata::where('filepath', 'like', '%'.basename($originalPath))->first();
 		        if($origFile) {
 			        $origFile->delete();
 			    }
@@ -131,7 +155,7 @@ class MEMetadata {
 
 			$widget->bindEvent('folder.rename', function ($originalPath, $newPath) {
 
-		        $items = Metadata::where('filepath','like', '%'.$originalPath.'%')->get();
+		        $items = MediaLibraryItemMetadata::where('filepath','like', '%'.$originalPath.'%')->get();
 		        foreach($items as $item) {
 		        	$item->filepath = str_replace($originalPath, $newPath, $item->full_path);
 		        	$item->save();

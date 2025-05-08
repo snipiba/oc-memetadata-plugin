@@ -17,3 +17,7 @@
     - allowing metadata for all filetypes
 1.0.13: Added new component for rendering image with W3C complaint for WAI/WCAG
 1.0.14: Fixed call for metadata to show correct file instead of first item
+1.0.15: 
+    - Fixed auto closing modal
+    - Updated logic for adding button to media items
+    - Updated logic for showing metadata on preview panel

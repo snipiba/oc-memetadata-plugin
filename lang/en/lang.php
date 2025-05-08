@@ -16,6 +16,31 @@
     'component' => [
         'name' => 'Metadata',
         'description' => 'Show data from media metadata',
+        
+        
+        'prop_image' => 'Image path (filepath)',
+        'prop_image_desc' => 'Must match the "filepath" column in the database',
+    
+        'prop_showTitle' => 'Show title',
+        'prop_showDescription' => 'Show description',
+        'prop_showKeywords' => 'Show keywords',
+    
+        'prop_layout' => 'Layout',
+        'layout_meta_in_image' => 'Metadata over image',
+        'layout_meta_below_image' => 'Metadata below image',
+    
+        'prop_textAlign' => 'Text alignment',
+        'text_left' => 'Left',
+        'text_center' => 'Center',
+        'text_right' => 'Right',
+    
+        'prop_useDefaultStyles' => 'Use default styles',
+        
+        'label_author' => 'Author',
+        'label_source' => 'Source',
+        'label_keywords' => 'Keywords',
+        'label_image_not_found' => 'Image record not found.',
+        
         'file_path' => 'Source file',
         'file_path_description' => 'Paste path from media library',
         'tag_label' => 'HTML tag',

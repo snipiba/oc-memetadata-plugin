@@ -1,0 +1,69 @@
+{% set layoutClass = __SELF__.property('layout') %}
+{% set useStyles = __SELF__.property('useDefaultStyles') %}
+{% set textAlign = __SELF__.property('textAlign') %}
+{% set uid = 'meta-' ~ __SELF__.alias|lower %}
+
+{% if __SELF__.meta %}
+<figure
+    id="{{ uid }}"
+    role="figure"
+    class="image-block {{ layoutClass }} {% if useStyles %}imageblock-default{% endif %} text-{{ textAlign }}"
+    aria-labelledby="{{ uid }}-caption"
+>
+    <img
+        src="{{ __SELF__.meta.filepath | media }}"
+        alt="{{ __SELF__.meta.title | escape }}"
+        loading="lazy"
+        aria-describedby="{{ uid }}-caption"
+    />
+
+    <figcaption id="{{ uid }}-caption">
+        {% if __SELF__.property('showTitle') and __SELF__.meta.title %}
+            <h2 class="image-title">{{ __SELF__.meta.title }}</h2>
+        {% endif %}
+
+        {% if __SELF__.property('showDescription') and __SELF__.meta.description %}
+            <p class="image-description">{{ __SELF__.meta.description }}</p>
+        {% endif %}
+
+        <div class="meta">
+            {% if __SELF__.meta.author %}
+                <p class="image-author">
+                    {{ 'snipi.memetadata::lang.component.label_author' | _ }}:
+                    {% if __SELF__.meta.author_url %}
+                        <a href="{{ __SELF__.meta.author_url }}" target="_blank" rel="noopener" class="external-link">
+                            {{ __SELF__.meta.author }}
+                        </a>
+                    {% else %}
+                        {{ __SELF__.meta.author }}
+                    {% endif %}
+                </p>
+            {% endif %}
+
+            {% if __SELF__.meta.source %}
+                <p class="image-source">
+                    {{ 'snipi.memetadata::lang.component.label_source' | _ }}:
+                    {% if __SELF__.meta.source_url %}
+                        <a href="{{ __SELF__.meta.source_url }}" target="_blank" rel="noopener" class="external-link">
+                            {{ __SELF__.meta.source }}
+                        </a>
+                    {% else %}
+                        {{ __SELF__.meta.source }}
+                    {% endif %}
+                </p>
+            {% endif %}
+        </div>
+
+        {% if __SELF__.property('showKeywords') and __SELF__.meta.keywords %}
+            <p class="image-keywords">
+                <strong>{{ 'snipi.memetadata::lang.component.label_keywords' | _ }}:</strong>
+                {{ __SELF__.meta.keywords }}
+            </p>
+        {% endif %}
+    </figcaption>
+</figure>
+{% else %}
+<p class="alert alert-warning">
+    {{ 'snipi.memetadata::lang.component.label_image_not_found' | _ }}
+</p>
+{% endif %}

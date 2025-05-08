@@ -62,13 +62,13 @@ class Plugin extends PluginBase
 
     public function registerPageSnippets() {
         return [
-            'SNiPI\MEMetadata\Components\Metadata' => 'metaInfo'
+            \SNiPI\MEmetadata\Components\ImageBlock::class => 'imageBlock'
         ];
     }
     
     public function registerComponents() {
         return [
-            'SNiPI\MEMetadata\Components\Metadata' => 'metaInfo'
+            \SNiPI\MEmetadata\Components\ImageBlock::class => 'imageBlock'
         ];
     }
     

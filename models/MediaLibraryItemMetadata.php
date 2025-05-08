@@ -13,7 +13,7 @@ class MediaLibraryItemMetadata extends Model {
 	protected $table = 'snipi_memetadata';
 	protected $primaryKey = 'id';
 
-	protected $fillable = ['title','keywords','filepath','description','user_id'];
+	protected $fillable = ['title','keywords','filepath','description','user_id','source','source_url','author','author_url'];
 
 	public $belongsTo = [
 		'user' => ['Backend\Models\User']

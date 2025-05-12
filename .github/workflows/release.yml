@@ -1,9 +1,9 @@
-name: Auto Release from version.yaml
+name: Release
 
 on:
   push:
     branches:
-      - master
+      - master  # zmeň na main ak potrebuješ
 
 jobs:
   release:
@@ -13,39 +13,50 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Set up Git
-      run: |
-        git config --global user.name 'github-actions'
-        git config --global user.email 'github-actions@github.com'
-
-    - name: Fetch all tags
+    - name: Fetch tags
       run: git fetch --tags
 
-    - name: Read version.yaml
+    - name: Read latest version from version.yaml
       id: read_version
       run: |
-        VERSION_LINE=$(grep -m1 '^v[0-9]\+\.[0-9]\+\.[0-9]\+:' updates/version.yaml)
-        VERSION=$(echo "$VERSION_LINE" | cut -d':' -f1)
-        TITLE=$(echo "$VERSION_LINE" | cut -d':' -f2- | sed 's/^ *//')
-
-        DESCRIPTION=$(awk "/^$VERSION:/{flag=1;next}/^v[0-9]+\.[0-9]+\.[0-9]+:/{flag=0}flag" updates/version.yaml)
-
+        VERSION=$(grep -oP '^v[0-9]+\.[0-9]+\.[0-9]+' updates/version.yaml | tail -1)
         echo "VERSION=$VERSION" >> $GITHUB_ENV
-        echo "TITLE=$TITLE" >> $GITHUB_ENV
-        echo "DESCRIPTION<<EOF" >> $GITHUB_ENV
-        echo "$DESCRIPTION" >> $GITHUB_ENV
-        echo "EOF" >> $GITHUB_ENV
+        echo "Latest version: $VERSION"
 
+    - name: Get latest existing Git tag
+      id: get_latest_tag
+      run: |
+        LATEST_TAG=$(git tag | sort -V | tail -1)
+        echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+        echo "Latest Git tag: $LATEST_TAG"
 
-    - name: Check for existing tag
+    - name: Check if tag already exists
       run: |
         if git rev-parse ${{ env.VERSION }} >/dev/null 2>&1; then
-          echo "Tag ${{ env.VERSION }} already exists. Exiting."
+          echo "Tag ${{ env.VERSION }} already exists. Skipping release."
           exit 0
         fi
 
-    - name: Create new tag
+    - name: Extract changelog from version.yaml
+      id: extract_changes
       run: |
+        awk "/^${{ env.LATEST_TAG }}:/{flag=1;next}/^v[0-9]+\.[0-9]+\.[0-9]+:/{flag=0}flag" updates/version.yaml | sed 's/^ *- //' > changes.txt
+        awk "/^${{ env.VERSION }}:/{flag=1;next}flag" updates/version.yaml | sed 's/^ *- //' >> changes.txt
+
+        echo "CHANGES<<EOF" >> $GITHUB_ENV
+        cat changes.txt >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Debug output
+      run: |
+        echo "Creating release ${{ env.VERSION }}"
+        echo "Changelog:"
+        cat changes.txt
+
+    - name: Create Git tag
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
         git tag ${{ env.VERSION }}
         git push origin ${{ env.VERSION }}
       env:
@@ -55,18 +66,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ env.VERSION }}
-        name: ${{ env.TITLE }}
-        body: ${{ env.DESCRIPTION }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Update changelog (optional)
-      run: |
-        echo "## ${{ env.VERSION }} - ${{ env.TITLE }}" >> changelog.md
-        echo "${{ env.DESCRIPTION }}" >> changelog.md
-        echo "" >> changelog.md
-        git add changelog.md
-        git commit -m "Update changelog for ${{ env.VERSION }}"
-        git push origin master
+        name: ${{ env.VERSION }}  # Release name = tag name
+        body: ${{ env.CHANGES }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

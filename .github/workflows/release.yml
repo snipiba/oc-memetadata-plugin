@@ -1,0 +1,71 @@
+name: Auto Release from version.yaml
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Git
+      run: |
+        git config --global user.name 'github-actions'
+        git config --global user.email 'github-actions@github.com'
+
+    - name: Fetch all tags
+      run: git fetch --tags
+
+    - name: Read version.yaml
+      id: read_version
+      run: |
+        VERSION_LINE=$(grep -m1 '^v[0-9]\+\.[0-9]\+\.[0-9]\+:' version.yaml)
+        VERSION=$(echo "$VERSION_LINE" | cut -d':' -f1)
+        TITLE=$(echo "$VERSION_LINE" | cut -d':' -f2- | sed 's/^ *//')
+
+        DESCRIPTION=$(awk "/^$VERSION:/{flag=1;next}/^v[0-9]+\.[0-9]+\.[0-9]+:/{flag=0}flag" version.yaml)
+
+        echo "VERSION=$VERSION" >> $GITHUB_ENV
+        echo "TITLE=$TITLE" >> $GITHUB_ENV
+        echo "DESCRIPTION<<EOF" >> $GITHUB_ENV
+        echo "$DESCRIPTION" >> $GITHUB_ENV
+        echo "EOF" >> $GITHUB_ENV
+
+    - name: Check for existing tag
+      run: |
+        if git rev-parse ${{ env.VERSION }} >/dev/null 2>&1; then
+          echo "Tag ${{ env.VERSION }} already exists. Exiting."
+          exit 0
+        fi
+
+    - name: Create new tag
+      run: |
+        git tag ${{ env.VERSION }}
+        git push origin ${{ env.VERSION }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      with:
+        tag_name: ${{ env.VERSION }}
+        name: ${{ env.TITLE }}
+        body: ${{ env.DESCRIPTION }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Update changelog (optional)
+      run: |
+        echo "## ${{ env.VERSION }} - ${{ env.TITLE }}" >> changelog.md
+        echo "${{ env.DESCRIPTION }}" >> changelog.md
+        echo "" >> changelog.md
+        git add changelog.md
+        git commit -m "Update changelog for ${{ env.VERSION }}"
+        git push origin master
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

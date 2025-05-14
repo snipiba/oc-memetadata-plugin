@@ -18,7 +18,7 @@ class MEMetadata {
 
 	public function  __construct() {
 		
-		if(!Str::endsWith(Request->getPath(),'/media')) {
+		if(!Str::endsWith(Request::path(),'/media')) {
 			return;
 		}
 		

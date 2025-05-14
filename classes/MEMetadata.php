@@ -4,7 +4,9 @@ namespace SNiPI\MEMetadata\Classes;
 use Input;
 use ApplicationException;
 use Exception;
+use Str;
 use Lang;
+use Request;
 use Cms\Classes\Theme;
 use Cms\Classes\Asset;
 use Backend\Classes\WidgetBase;
@@ -15,6 +17,10 @@ class MEMetadata {
     protected $theme;
 
 	public function  __construct() {
+		
+		if(!Str::endsWith(Request->getPath(),'/media')) {
+			return;
+		}
 		
         $this->theme = Theme::getEditTheme();
 		

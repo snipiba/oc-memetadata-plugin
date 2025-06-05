@@ -66,9 +66,11 @@ function injectMetadataButtons(retries = 10) {
     });
 }
 
+var done = false;
 $(document).on('render.oc.mediaManager', function () {
     injectMetadataButtons();
-    attachMetadataSidebarEnhancer();
+    if ( !done ) attachMetadataSidebarEnhancer();
+    done = !done;
 });
 
 

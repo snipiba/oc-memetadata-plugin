@@ -1,7 +1,7 @@
 function injectMetadataButtons(retries = 10) {
     
-    const tableRows = $('tr[data-type="media-item"]:not(.metadata-patched):not([data-item-type="folder"]');
-    const gridItems = $('li[data-type="media-item"]:not(.metadata-patched):not([data-item-type="folder"]');
+    const tableRows = $('tr[data-type="media-item"]:not(.metadata-patched):is([data-document-type="image"]');
+    const gridItems = $('li[data-type="media-item"]:not(.metadata-patched):is([data-document-type="image"]')
 
     const anyFound = tableRows.length > 0 || gridItems.length > 0;
     if (!anyFound) {

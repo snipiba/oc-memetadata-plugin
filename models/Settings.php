@@ -4,9 +4,6 @@ namespace SNiPI\MEMetadata\Models;
 use October\Rain\Database\Model;
 use System\Models\MailTemplate;
 
-/**
- * WpContentImporter settings
- */
 class Settings extends Model
 {
 

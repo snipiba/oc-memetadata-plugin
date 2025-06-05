@@ -8,7 +8,8 @@ use Carbon\Carbon;
 use Backend\Models\User as BackendUser;
 
 
-class MediaLibraryItemMetadata extends Model {
+class MediaLibraryItemMetadata extends Model 
+{
 	
 	protected $table = 'snipi_memetadata';
 	protected $primaryKey = 'id';
@@ -24,4 +25,5 @@ class MediaLibraryItemMetadata extends Model {
 
 		return '<img src="' . $mediaFolder . $this->filepath .'" alt="'.$this->title.'" class="w-full img-thumbnail"/>';
 	}
+
 }

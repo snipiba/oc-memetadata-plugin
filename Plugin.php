@@ -1,5 +1,4 @@
-<?php 
-namespace SNiPI\MEMetadata;
+<?php namespace SNiPI\MEMetadata;
 
 use Config;
 use Illuminate\Filesystem\Filesystem;

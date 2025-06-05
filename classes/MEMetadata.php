@@ -11,6 +11,7 @@ use Cms\Classes\Theme;
 use Cms\Classes\Asset;
 use Backend\Classes\WidgetBase;
 use SNiPI\MEMetadata\Models\MediaLibraryItemMetadata;
+
 class MEMetadata {
 	
 

@@ -24,7 +24,7 @@
         'prop_showTitle' => 'Show title',
         'prop_showDescription' => 'Show description',
         'prop_showKeywords' => 'Show keywords',
-    
+
         'prop_layout' => 'Layout',
         'layout_meta_in_image' => 'Metadata over image',
         'layout_meta_below_image' => 'Metadata below image',

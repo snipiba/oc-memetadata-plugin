@@ -14,7 +14,6 @@ use SNiPI\MEMetadata\Models\MediaLibraryItemMetadata;
 
 class MEMetadata {
 	
-
     protected $theme;
 
 	public function  __construct() {
@@ -41,7 +40,7 @@ class MEMetadata {
             $widget->addDynamicMethod('onLoadMetadataPopup', function() use ($widget) {
 
 
-		        $path = Input::get('path');
+		        $path = $this->safeInput('path');
 		        if (!$this->validatePath($path)) {
 		            throw new ApplicationException(Lang::get('cms::lang.asset.invalid_path'));
 		        }
@@ -58,7 +57,10 @@ class MEMetadata {
 		        $widget->vars['originalPath'] = $path;
 		        $widget->vars['name'] = basename($path);
 		        $widget->vars['theme'] = $this->theme;
-		        $widget->vars['exif'] = @exif_read_data(storage_path('app/media' . $path));
+
+		        $exif = @exif_read_data(storage_path('app/media' . $path));
+				$exif = is_array($exif) ? array_map(fn($v) => is_string($v) ? mb_convert_encoding($v, 'UTF-8', 'UTF-8') : $v, $exif) : [];
+				$widget->vars['exif'] = $exif;
 
                 $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
                 $isSvg = in_array($ext, ['svg', 'svgz']);
@@ -78,26 +80,26 @@ class MEMetadata {
             });
 
             $widget->addDynamicMethod('onApplyMetadataUpdate', function() use ($widget){
-            	$path = Input::get('path');
+            	$path = $this->safeInput('path');
             	$metadata = MediaLibraryItemMetadata::withoutGlobalScopes()->where('filepath',$path)->first();
             	if($metadata) {
-	        		$metadata->title = Input::get('title');
-	        		$metadata->keywords = Input::get('keywords');
-	        		$metadata->description = Input::get('description');
-	        		$metadata->source = Input::get('source');
-	        		$metadata->source_url = Input::get('source_url');
-	        		$metadata->author = Input::get('author');
-	        		$metadata->author_url = Input::get('author_url');
+	        		$metadata->title = $this->safeInput('title');
+	        		$metadata->keywords = $this->safeInput('keywords');
+	        		$metadata->description = $this->safeInput('description');
+	        		$metadata->source = $this->safeInput('source');
+	        		$metadata->source_url = $this->safeInput('source_url');
+	        		$metadata->author = $this->safeInput('author');
+	        		$metadata->author_url = $this->safeInput('author_url');
 	        	} else {
 	        		$metadata = new MediaLibraryItemMetadata;
 	        		$metadata->filepath = $path;
-	        		$metadata->title = Input::get('title');
-	        		$metadata->keywords = Input::get('keywords');
-	        		$metadata->description = Input::get('description');
-	        		$metadata->source = Input::get('source');
-	        		$metadata->source_url = Input::get('source_url');
-	        		$metadata->author = Input::get('author');
-	        		$metadata->author_url = Input::get('author_url');
+	        		$metadata->title = $this->safeInput('title');
+	        		$metadata->keywords = $this->safeInput('keywords');
+	        		$metadata->description = $this->safeInput('description');
+	        		$metadata->source = $this->safeInput('source');
+	        		$metadata->source_url = $this->safeInput('source_url');
+	        		$metadata->author = $this->safeInput('author');
+	        		$metadata->author_url = $this->safeInput('author_url');
 	        	}
 	        	$metadata->save();
 
@@ -189,4 +191,9 @@ class MEMetadata {
 
         return true;
     }
+
+    protected function safeInput($key) {
+	    $val = Input::get($key);
+	    return is_string($val) ? mb_convert_encoding($val, 'UTF-8', 'UTF-8') : $val;
+	}
 }

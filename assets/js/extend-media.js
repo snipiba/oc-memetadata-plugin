@@ -103,7 +103,7 @@ $(document).on('render.oc.mediaManager', function () {
                             <th>Title</th>
                             <td>${data.meta.title}</td>
                         </tr>` : ''}
-                        ${data.meta.author ? `
+                        ${data.meta.description ? `
                         <tr>
                             <th>Description</th>
                             <td>${data.meta.description}</td>
@@ -117,12 +117,12 @@ $(document).on('render.oc.mediaManager', function () {
                         </tr>` : ''}
                         ${data.meta.source ? `
                         <tr>
-                            <th>Zdroj</th>
+                            <th>Source</th>
                             <td>${data.meta.source_url
                                 ? `<a href="${data.meta.source_url}" target="_blank" rel="noopener" class="external-link">${data.meta.source}</a>`
                                 : data.meta.source}</td>
                         </tr>` : ''}
-                        ${data.meta.source ? `
+                        ${data.meta.keywords ? `
                         <tr>
                             <th>Keywords</th>
                             <td>${data.meta.keywords}</td>

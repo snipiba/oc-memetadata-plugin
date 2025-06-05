@@ -33,4 +33,5 @@ class CreateSnipiMeMetadataTable extends Migration
 	    Schema::dropIfExists('snipi_memetadata');
 	} 
 
+
 }

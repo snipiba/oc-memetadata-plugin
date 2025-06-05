@@ -16,7 +16,7 @@
     'component' => [
         'name' => 'Metadáta',
         'description' => 'Zobraziť údaje z metadát médií',
-        
+    
         'label_metadata_group' => 'Metadáta k obrázku',
 
         'prop_image' => 'Cesta k obrázku (filepath)',

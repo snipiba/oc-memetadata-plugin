@@ -1,4 +1,5 @@
 function injectMetadataButtons(retries = 10) {
+    
     const tableRows = $('tr[data-type="media-item"]:not(.metadata-patched):not([data-item-type="folder"]');
     const gridItems = $('li[data-type="media-item"]:not(.metadata-patched):not([data-item-type="folder"]');
 

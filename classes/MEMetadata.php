@@ -171,7 +171,7 @@ class MEMetadata {
 
 			$widget->bindEvent('folder.delete', function ($originalPath) {
 		        // Update custom references to path here
-		        $items = Metadata::where('filepath','like', '%'.$originalPath.'%')->delete();
+		        $items = MediaLibraryItemMetadata::where('filepath','like', '%'.$originalPath.'%')->delete();
 		        
 		    });
 

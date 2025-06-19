@@ -11,6 +11,6 @@
         }
     ],
     "require": {
-        "spatie/image": "^1.0"
+        "spatie/image": "^3.0"
     }
 }
